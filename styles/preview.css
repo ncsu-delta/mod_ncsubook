@@ -1,0 +1,47 @@
+div.preview_pane {
+    /* float: left;
+    width:40%; */
+    border:1px solid black;
+    overflow: auto;
+    text-align:left;
+    padding-bottom:10px;
+}
+.preview_pane div.content {
+    padding-left: 10px;
+    padding-right: 10px;
+    display:block;
+    line-height:14px;
+    margin-top: 10px;
+}
+.preview_pane div.content:after {
+    content: " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - "
+}
+.preview_pane div.float {
+    float:right;
+    clear:both;
+    box-shadow: 2px 2px 3px #888888;
+    margin:10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    width:35%;
+    height:50px;
+    background-color:#888888;
+    overflow: auto;
+}
+.preview_pane div.non-float {
+    clear:both;
+    box-shadow: 2px 2px 3px #888888;
+    margin:10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    width:95%;
+    height:45px;
+    background-color:#888888;
+}
+
+.preview_pane .previewtitle {
+    color: white;
+    padding: 7px;
+    font-size: 9px;
+    text-align: center;
+}

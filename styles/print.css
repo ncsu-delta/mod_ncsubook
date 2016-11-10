@@ -1,0 +1,173 @@
+/* Style-sheet for a red NC State Book */
+
+.ncsubook_chapter_title {
+    text-align: left;
+    font-size: 1.6em;
+    margin-left: 0px;
+    margin-bottom: 20px;
+}
+
+/* Begin General Styling */
+.ncsubook_hr {
+    border-color: #000000;
+    background-color: #000000;
+    color: #000000;
+}
+
+.ncsubook_introduction_chapter, .ncsubook_learningobjectives_chapter, .ncsubook_summary_chapter {
+    background-color: #FFFFFF;
+    border-top: 4px solid #000000;
+    border-bottom: 4px solid #000000;
+}
+
+.ncsubook_basic_chapter {
+    border-top: 4px solid #000000;
+    border-bottom: 4px solid #000000;
+}
+
+.ncsubook_introduction_chapter .ncsubook_chapter_title,
+.ncsubook_learningobjectives_chapter .ncsubook_chapter_title {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+.ncsubook_basic_chapter .ncsubook_chapter_title {
+    color: #000000;
+}
+
+/* .ncsubook_basic_chapter .ncsubook_chapter_title_div {
+    background-image: linear-gradient(to top, #FFFFFF 0%, #000000 100%)
+} */
+
+
+.ncsubook_introduction_chapter .ncsubook_chapter_title_div,
+.ncsubook_learningobjectives_chapter .ncsubook_chapter_title_div {
+    background-color: #FFFFFF;
+}
+
+.ncsubook_summary_chapter .ncsubook_chapter_title {
+    background-color: #FFFFFF;
+    color: black;
+}
+
+.ncsubook_summary_chapter .ncsubook_chapter_title_div {
+    background-color: #FFFFFF;
+}
+
+.ncsubook_assignment_chapter .ncsubook_chapter_title {
+    background-color: #FFFFFF;
+    color: black;
+}
+
+.ncsubook_assignment_chapter .ncsubook_chapter_title_div {
+    background-color: #FFFFFF;
+}
+
+.ncsubook_chapter_additional_title1 {
+    color: black;
+}
+/* End General Styling */
+
+/* Begin Block Styling */
+
+/* Learning Objectives Block */
+.ncsubook_learningobjectives_block {}
+
+.ncsubook_learningobjectives_block .block_content {
+    background-color: white;
+
+}
+
+.ncsubook_learningobjectives_block .block_title {
+    border-bottom: 1px solid black;
+    background-color: #FFFFFF;
+    color: black;
+    background-image: linear-gradient(to top, #FFFFFF 0%, #FFFFFF 100%)
+}
+/* End Learning Objectives Block */
+
+/* Call Out 1 Block */
+.ncsubook_callout1_block {
+    background-color: #FFFFFF;
+}
+
+.ncsubook_callout1_block .block_title {
+    color: black;
+    background-color: #FFFFFF;
+}
+
+.ncsubook_callout1_block .block_content {
+    color: black;
+    background-color: #FFFFFF;
+}
+/* End Call Out 1 Block */
+
+/* Call Out 2 Block */
+.ncsubook_callout2_block {
+    border-left: 2px solid black;
+}
+
+.ncsubook_callout2_block .block_title {
+    color: black;
+}
+/* End Call Out 2 Block */
+
+/* Activity Narrow Block */
+.ncsubook_activitynarrow_block {
+    border: 1px solid black;
+    background-color: #FFFFFF;
+}
+
+.ncsubook_activitynarrow_block .block_title {
+    border-bottom: 1px solid black;
+    background-color: #FFFFFF;
+    color: black;
+}
+/* End Activity Narrow Block */
+
+/* Activity Wide Block */
+.ncsubook_activitywide_block {
+    border: 3px solid #000000;
+    background-color: #FFFFFF;
+}
+
+.ncsubook_activitywide_block .block_title {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+/* End Activity Wide Block */
+
+/* Assessment Narrow Block */
+.ncsubook_assessmentnarrow_block {
+    border: 1px solid black;
+    background-color: #FFFFFF;
+}
+
+.ncsubook_assessmentnarrow_block .block_title {
+    background-color: #FFFFFF;
+    color: black;
+    border-bottom: 1px solid black;
+}
+/* End Assessment Narrow Block */
+
+/* Assessment Wide Block */
+.ncsubook_assessmentwide_block {
+    border: 3px solid #000000;
+    background-color: #FFFFFF;
+}
+
+.ncsubook_assessmentwide_block .block_title {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+/* End Assessment Wide Block */
+/* End Block Styling */
+
+.introicon_elements {
+    fill: #000000;
+}
+
+.checklisticon_elements {
+    fill: #000000;
+}
+

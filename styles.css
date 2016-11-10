@@ -1,0 +1,490 @@
+
+.path-mod-ncsubook .ncsubook_chapter_title {
+    text-align: left;
+    font-size: 1.6em;
+    margin-left: 0px;
+    margin-bottom: 20px;
+}
+
+.path-mod-ncsubook .ncsubook_chapter_title .ncsubook_subchapter_title {
+    text-align: left;
+    font-size: .8em;
+    margin-left: 0px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.path-mod-ncsubook img.bigicon {
+  vertical-align: middle;
+  margin-right: 4px;
+  margin-left: 4px;
+  width: 24px;
+  height: 24px;
+  border: 0px;
+}
+
+.path-mod-ncsubook .navtop {
+    text-align: right;
+    margin-bottom: 0.5em;
+}
+
+.path-mod-ncsubook .navbottom {
+    text-align: right;
+}
+
+/* == Fake toc block == */
+
+.ncsubook_toc_none ul li a,
+.ncsubook_toc_indented ul li a,
+.ncsubook_toc_numbered ul li a,
+.ncsubook_toc_bullets ul li a {
+    padding-right: 8px;
+}
+
+/* toc style NONE */
+.path-mod-ncsubook .ncsubook_toc_none {
+  font-size: 1em;
+}
+.path-mod-ncsubook .ncsubook_toc_none ul {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+.path-mod-ncsubook .ncsubook_toc_none ul ul {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+.path-mod-ncsubook .ncsubook_toc_none li {
+    margin-top: 5px;
+    list-style: none;
+}
+.path-mod-ncsubook .ncsubook_toc_none li li {
+    margin-top: 0px;
+    list-style: none;
+}
+
+
+/* toc style NUMBERED */
+.path-mod-ncsubook .ncsubook_toc_numbered {
+  font-size: 1em;
+}
+.path-mod-ncsubook .ncsubook_toc_numbered ul {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+.path-mod-ncsubook .ncsubook_toc_numbered ul ul {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+.path-mod-ncsubook .ncsubook_toc_numbered li {
+    margin-top: 5px;
+    list-style: none;
+}
+.path-mod-ncsubook .ncsubook_toc_numbered li li {
+    margin-top: 0px;
+    list-style: none;
+    margin-left: 10px;
+}
+
+
+/*toc style BULLETS */
+.path-mod-ncsubook .ncsubook_toc_bullets {
+  font-size: 1em;
+}
+.path-mod-ncsubook .ncsubook_toc_bullets ul {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+.path-mod-ncsubook .ncsubook_toc_bullets ul ul {
+    margin-left: 20px;
+    padding-left: 0px;
+}
+.path-mod-ncsubook .ncsubook_toc_bullets li {
+    margin-top: 5px;
+    list-style: none;
+}
+.path-mod-ncsubook .ncsubook_toc_bullets li li {
+    margin-top: 0px;
+    list-style: circle;
+}
+
+
+/* toc style INDENTED*/
+.path-mod-ncsubook .ncsubook_toc_indented {
+  font-size: 1em;
+}
+.path-mod-ncsubook .ncsubook_toc_indented ul {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+.path-mod-ncsubook .ncsubook_toc_indented ul ul {
+    margin-left: 15px;
+    padding-left: 0px;
+}
+.path-mod-ncsubook .ncsubook_toc_indented li {
+    margin-top: 5px;
+    list-style: none;
+}
+.path-mod-ncsubook .ncsubook_toc_indented li li {
+    margin-top: 0px;
+    list-style: none;
+}
+
+.ncsubook_content {
+    overflow: auto;
+    border-top: 4px solid #000;
+    border-bottom: 4px solid #000;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    padding: 5px;
+}
+
+.intro_icon_container {
+    display: inline-block;
+    float: left;
+    padding-left: 25px;
+    margin-top: -5px;
+}
+
+.checklist_icon_container {
+    display: inline-block;
+    float: left;
+    padding-left: 35px;
+    margin-top: -10px;
+}
+
+.ncsubook_introduction_chapter .ncsubook_chapter_title,
+.ncsubook_learningobjectives_chapter .ncsubook_chapter_title,
+.ncsubook_summary_chapter .ncsubook_chapter_title {
+    margin-left: 110px;
+    padding-top: 10px;
+}
+
+.ncsubook_basic_chapter .ncsubook_chapter_title {
+    margin-left: 30px;
+    padding-top: 15px;
+}
+
+.ncsubook_introduction_chapter .ncsubook_chapter_title_div,
+.ncsubook_learningobjectives_chapter .ncsubook_chapter_title_div,
+.ncsubook_summary_chapter .ncsubook_chapter_title_div {
+    height: auto;
+    min-height: 40px;
+    margin-bottom: 25px;
+    box-shadow: 3px 3px 3px #888888;
+    background-color: #ccc;
+}
+
+.ncsubook_introduction_chapter .ncsubook_subchapter_title,
+.ncsubook_learningobjectives_chapter .ncsubook_subchapter_title,
+.ncsubook_summary_chapter .ncsubook_subchapter_title {
+    padding-bottom: 10px;
+}
+
+.ncsubook_introduction_chapter, .ncsubook_learningobjectives_chapter, .ncsubook_summary_chapter {
+    background-color: #fafafa;
+}
+
+.ncsubook_basic_chapter .ncsubook_chapter_title_div {
+    /* height: 40px; */
+    margin-bottom: 25px;
+    background-image: linear-gradient(to top, #FFFFFF 0%, #ccc 100%);
+}
+
+.ncsubook_assignment_chapter .ncsubook_chapter_title_div {
+    height: auto
+    min-height: 40px;
+    padding-top: 15px;
+    padding-left: 25px;
+    padding-bottom: 1px;
+    background-image: linear-gradient(to top, #FFFFFF 0%, #ccc 100%);
+}
+
+.ncsubook_introduction_chapter .ncsubook_chapter_additional_title1,
+.ncsubook_learningobjectives_chapter .ncsubook_chapter_additional_title1,
+.ncsubook_summary_chapter .ncsubook_chapter_additional_title1 {
+    padding-top: 15px;
+    padding-left: 15px;
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.ncsubook_introduction_chapter .ncsubook_chapter_additional_title2,
+.ncsubook_learningobjectives_chapter .ncsubook_chapter_additional_title2,
+.ncsubook_summary_chapter .ncsubook_chapter_additional_title2 {
+    display: none;
+}
+
+.ncsubook_introduction_chapter .ncsubook_chapter_booktitle1,
+.ncsubook_learningobjectives_chapter .ncsubook_chapter_booktitle1,
+.ncsubook_summary_chapter .ncsubook_chapter_booktitle1 {
+    padding-top: 15px;
+    padding-left: 15px;
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.ncsubook_introduction_chapter .ncsubook_chapter_booktitle2,
+.ncsubook_learningobjectives_chapter .ncsubook_chapter_booktitle2,
+.ncsubook_summary_chapter .ncsubook_chapter_booktitle2 {
+    display: none;
+}
+
+.ncsubook_assignment_chapter .ncsubook_chapter_additional_title1,
+.ncsubook_basic_chapter .ncsubook_chapter_additional_title1 {
+    display: none;
+}
+
+.ncsubook_assignment_chapter .ncsubook_chapter_additional_title2,
+.ncsubook_basic_chapter .ncsubook_chapter_additional_title2 {
+    font-size: 1.0em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    float: right;
+    width: 100%;
+    margin-top: 10px;
+    margin-right: 20px;
+}
+
+.ncsubook_assignment_chapter .ncsubook_chapter_booktitle1,
+.ncsubook_basic_chapter .ncsubook_chapter_booktitle1 {
+    display: none;
+}
+
+.ncsubook_assignment_chapter .ncsubook_chapter_booktitle2,
+.ncsubook_basic_chapter .ncsubook_chapter_booktitle2 {
+    font-size: 1.0em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    float: right;
+    width: 100%;
+    margin-top: 5px;
+    margin-right: 20px;
+}
+
+.ncsubook_hr {
+    width: 97%;
+    height: 0;
+    margin: 0 auto;
+    border: none;
+    border-top: thin solid #355562;
+}
+
+/* Begin NC State Book Block Styling */
+/* The following styles are for a block's contents whether
+ * narrow or wide. Don't confuse it with the one below. */
+.block_content img {
+    margin: 5px 5px 0px 5px;
+}
+
+.ncsubook_content img {
+    margin: 5px 5px 0px 5px;
+}
+/* The following styles are for the content block type. Don't confuse
+ * it with the one above. */
+.ncsubook_content_block {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.ncsubook_learningobjectives_block {
+    width: 33%;
+    overflow: auto;
+    clear: both;
+    float: right;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #000000;
+    margin-right: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+}
+
+.ncsubook_learningobjectives_block .block_title {
+    min-height: 30px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    font-weight: bold;
+    overflow: auto;
+    border-bottom: 1px solid black;
+    background-color: #ddd;
+    color: black;
+    background-image: linear-gradient(to top, #FFFFFF 0%, #ddd 100%);
+}
+.ncsubook_learningobjectives_block .block_content {
+    padding: 15px;
+    background-color:#fff;
+}
+
+.ncsubook_callout1_block {
+    width: 33%;
+    overflow: auto;
+    clear: both;
+    float: right;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #000000;
+    margin-right: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+}
+
+.ncsubook_callout1_block .block_title {
+    min-height: 30px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    font-weight: bold;
+    overflow: auto;
+}
+
+.ncsubook_callout1_block .block_content {
+    padding-left: 15px;
+}
+
+.ncsubook_callout2_block {
+    width: 33%;
+    overflow: auto;
+    clear: both;
+    float: right;
+    margin-right: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+}
+
+.ncsubook_callout2_block .block_title {
+    min-height: 30px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+    margin-left: 15px;
+    font-weight: bold;
+    overflow: auto;
+}
+
+.ncsubook_callout2_block .block_content {
+    padding-left: 15px;
+}
+
+.ncsubook_activitynarrow_block {
+    width: 33%;
+    overflow: auto;
+    clear: both;
+    float: right;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #000000;
+    margin-right: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+}
+
+.ncsubook_activitynarrow_block .block_title {
+    min-height: 30px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    font-weight: bold;
+    overflow: auto;
+}
+
+.ncsubook_activitynarrow_block .block_content {
+    padding: 15px;
+}
+
+.ncsubook_activitywide_block {
+    width: 95%;
+    overflow: auto;
+    clear: both;
+    margin-left: 2%;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #000000;
+    margin-right: 25px;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    float: left;
+    border: 1px solid #ccc;
+}
+
+.ncsubook_activitywide_block .block_content {
+    padding: 15px;
+    /* padding-top: 0px; */
+}
+
+.ncsubook_activitywide_block .block_title {
+    min-height: 30px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    font-weight: bold;
+    overflow: auto;
+    background-image: linear-gradient(to top, #FFFFFF 0%, #ccc 100%);
+    border-bottom: 1px solid #ccc;
+}
+
+.ncsubook_assessmentnarrow_block {
+    width: 33%;
+    overflow: auto;
+    clear: both;
+    float: right;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #000000;
+    margin-right: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+}
+
+.ncsubook_assessmentnarrow_block .block_title {
+    min-height: 30px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    font-weight: bold;
+    overflow: auto;
+}
+
+.ncsubook_assessmentnarrow_block .block_content {
+    padding: 15px;
+    padding-top: 0px;
+}
+
+.ncsubook_assessmentwide_block {
+    width: 95%;
+    overflow: auto;
+    clear: both;
+    margin-left: 2%;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #000000;
+    margin-right: 25px;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    float: left;
+}
+
+.ncsubook_assessmentwide_block .block_content {
+    padding: 2%;
+    padding-top: 0px;
+}
+
+.ncsubook_assessmentwide_block .block_title {
+    min-height: 30px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    font-weight: bold;
+    overflow: auto;
+}
+/* End Page Block Styling */
