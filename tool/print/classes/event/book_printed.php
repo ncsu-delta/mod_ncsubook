@@ -15,11 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * booktool_print book printed event.
  *
  * @package    booktool_print
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 namespace ncsubooktool_print\event;
@@ -44,10 +52,9 @@ class book_printed extends \core\event\base {
      * @return book_printed
      */
     public static function create_from_book(\stdClass $ncsubook, \context_module $context) {
-        $data = array(
-            'context' => $context,
-            'objectid' => $ncsubook->id
-        );
+        $data = ['context' => $context,
+                 'objectid' => $ncsubook->id,
+                ];
         /** @var book_printed $event */
         $event = self::create($data);
         $event->add_record_snapshot('ncsubook', $ncsubook);
@@ -97,9 +104,9 @@ class book_printed extends \core\event\base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = 'ncsubook';
+        $this->data['crud']         = 'r';
+        $this->data['edulevel']     = self::LEVEL_PARTICIPATING;
+        $this->data['objecttable']  = 'ncsubook';
     }
 
 }

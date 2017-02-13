@@ -15,11 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * HTML import lib
  *
  * @package    ncsubooktool_importhtml
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -34,7 +42,7 @@ function ncsubooktool_importhtml_extend_settings_navigation(settings_navigation 
     global $PAGE;
 
     if (has_capability('ncsubooktool/importhtml:import', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/ncsubook/tool/importhtml/index.php', array('id'=>$PAGE->cm->id));
+        $url = new moodle_url('/mod/ncsubook/tool/importhtml/index.php', ['id' => $PAGE->cm->id]);
 
         // Gary Harris - 4/23/2013
         // Commented out the following line for the import chapter link in the navigation sidebar because

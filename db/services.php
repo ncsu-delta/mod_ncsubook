@@ -15,33 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book external functions and service definitions.
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$functions = array(
-
-    'mod_ncsubook_view_ncsubook' => array(
-        'classname'     => 'mod_ncsubook_external',
-        'methodname'    => 'view_ncsubook',
-        'description'   => 'Simulate the view.php web interface ncsubook: trigger events, completion, etc...',
-        'type'          => 'write',
-        'capabilities'  => 'mod/ncsubook:read'
-    ),
-
-    'mod_ncsubook_get_ncsubooks_by_courses' => array(
-        'classname'     => 'mod_ncsubook_external',
-        'methodname'    => 'get_ncsubooks_by_courses',
-        'description'   => 'Returns a list of ncsubook instances in a provided set of courses,
-                            if no courses are provided then all the ncsubook instances the user has access to will be returned.',
-        'type'          => 'read',
-        'capabilities'  => ''
-    )
-);
+$functions = [
+    'mod_ncsubook_view_ncsubook'            => [
+                                                'classname'     => 'mod_ncsubook_external',
+                                                'methodname'    => 'view_ncsubook',
+                                                'description'   => 'Simulate the view.php web interface ncsubook: trigger events, completion, etc...',
+                                                'type'          => 'write',
+                                                'capabilities'  => 'mod/ncsubook:read',
+                                              ],
+    'mod_ncsubook_get_ncsubooks_by_courses' => [
+                                                'classname'     => 'mod_ncsubook_external',
+                                                'methodname'    => 'get_ncsubooks_by_courses',
+                                                'description'   => 'Returns a list of ncsubook instances in a provided set of courses.'
+                                                                .  'If no courses are provided then all the ncsubook instances the user has access to will be returned.',
+                                                'type'          => 'read',
+                                                'capabilities'  => '',
+                                               ],
+];

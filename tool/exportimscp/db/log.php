@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * Export to IMSCP ncsubooktool log events definition
  *
  * @package    ncsubooktool_exportimscp
  * @copyright  2012 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$logs = array(
-    array('module'=>'ncsubook', 'action'=>'exportimscp', 'mtable'=>'ncsubook', 'field'=>'name')
-);
+$logs = [['module' => 'ncsubook', 'action' => 'exportimscp', 'mtable' => 'ncsubook', 'field' => 'name']];

@@ -13,12 +13,17 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Book module upgrade code
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2009-2011 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -74,7 +79,7 @@ function xmldb_ncsubook_upgrade($oldversion) {
             // Conditionally migrate to html format in intro
             // Si está activo el htmleditor!!!!!
             if ($CFG->texteditors !== 'textarea') {
-                $rs = $DB->get_recordset('ncsubook', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+                $rs = $DB->get_recordset('ncsubook', ['introformat' => FORMAT_MOODLE], '', 'id,intro,introformat');
                 foreach ($rs as $b) {
                     $b->intro       = text_to_html($b->intro, false, false, true);
                     $b->introformat = FORMAT_HTML;
@@ -107,15 +112,15 @@ function xmldb_ncsubook_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012061706) {
-        require_once("$CFG->dirroot/mod/ncsubook/db/upgradelib.php");
+        require_once($CFG->dirroot . '/mod/ncsubook/db/upgradelib.php');
 
         $sqlfrom = "FROM {ncsubook} b
                     JOIN {modules} m ON m.name = 'ncsubook'
                     JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = b.id)";
 
-        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+        $count = $DB->count_records_sql("SELECT COUNT('x') " . $sqlfrom);
 
-        if ($rs = $DB->get_recordset_sql("SELECT b.id, b.course, cm.id AS cmid $sqlfrom ORDER BY b.course, b.id")) {
+        if ($rs = $DB->get_recordset_sql('SELECT b.id, b.course, cm.id AS cmid ' . $sqlfrom . ' ORDER BY b.course, b.id')) {
 
             $pbar = new progress_bar('migratencsubookfiles', 500, true);
 
@@ -130,10 +135,11 @@ function xmldb_ncsubook_upgrade($oldversion) {
                 mod_ncsubook_migrate_moddata_dir_to_legacy($ncsubook, $context, '/');
 
                 // remove dirs if empty
-                @rmdir("$CFG->dataroot/$ncsubook->course/$CFG->moddata/ncsubook/$ncsubook->id/");
-                @rmdir("$CFG->dataroot/$ncsubook->course/$CFG->moddata/ncsubook/");
-                @rmdir("$CFG->dataroot/$ncsubook->course/$CFG->moddata/");
-                @rmdir("$CFG->dataroot/$ncsubook->course/");
+                rmdir($CFG->dataroot . DIRECTORY_SEPARATOR . $ncsubook->course . DIRECTORY_SEPARATOR
+                    . $CFG->moddata . DIRECTORY_SEPARATOR . ncsubook . DIRECTORY_SEPARATOR . $ncsubook->id);
+                rmdir($CFG->dataroot . DIRECTORY_SEPARATOR . $ncsubook->course . DIRECTORY_SEPARATOR . $CFG->moddata . DIRECTORY_SEPARATOR . 'ncsubook/');
+                rmdir($CFG->dataroot . DIRECTORY_SEPARATOR . $ncsubook->course . DIRECTORY_SEPARATOR . $CFG->moddata);
+                rmdir($CFG->dataroot . DIRECTORY_SEPARATOR . $ncsubook->course);
             }
             $rs->close();
         }
@@ -164,7 +170,7 @@ function xmldb_ncsubook_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012061709) {
-        require_once("$CFG->dirroot/mod/ncsubook/db/upgradelib.php");
+        require_once($CFG->dirroot . '/mod/ncsubook/db/upgradelib.php');
 
         mod_ncsubook_migrate_all_areas();
 

@@ -15,13 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * NC State Book external API
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -68,28 +70,20 @@ class mod_ncsubook_external extends external_api {
         require_once($CFG->dirroot . "/mod/ncsubook/lib.php");
         require_once($CFG->dirroot . "/mod/ncsubook/locallib.php");
 
-        $params = self::validate_parameters(self::view_ncsubook_parameters(),
-                                            array(
-                                                'ncsubookid' => $ncsubookid,
-                                                'chapterid' => $chapterid
-                                            ));
-        $ncsubookid = $params['ncsubookid'];
-        $chapterid = $params['chapterid'];
-
-        $warnings = array();
-
+        $params             = self::validate_parameters(self::view_ncsubook_parameters(), ['ncsubookid' => $ncsubookid, 'chapterid' => $chapterid]);
+        $ncsubookid         = $params['ncsubookid'];
+        $chapterid          = $params['chapterid'];
+        $warnings           = [];
         // Request and permission validation.
-        $ncsubook = $DB->get_record('ncsubook', array('id' => $ncsubookid), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($ncsubook, 'ncsubook');
+        $ncsubook           = $DB->get_record('ncsubook', ['id' => $ncsubookid], '*', MUST_EXIST);
+        list($course, $cm)  = get_course_and_cm_from_instance($ncsubook, 'ncsubook');
+        $context            = context_module::instance($cm->id);
+        $chapters           = ncsubook_preload_chapters($ncsubook);
+        $firstchapterid     = 0;
+        $lastchapterid      = 0;
 
-        $context = context_module::instance($cm->id);
         self::validate_context($context);
-
         require_capability('mod/ncsubook:read', $context);
-
-        $chapters = ncsubook_preload_chapters($ncsubook);
-        $firstchapterid = 0;
-        $lastchapterid = 0;
 
         foreach ($chapters as $ch) {
             if ($ch->hidden) {
@@ -104,32 +98,31 @@ class mod_ncsubook_external extends external_api {
         if (!$chapterid) {
             // Trigger the module viewed events since we are displaying the ncsubook.
             ncsubook_view($ncsubook, null, false, $course, $cm, $context);
-            $chapterid = $firstchapterid;
+            $chapterid      = $firstchapterid;
         }
 
         // Check if ncsubook is empty (warning).
         if (!$chapterid) {
-            $warnings[] = array(
-                'item' => 'ncsubook',
-                'itemid' => $ncsubook->id,
-                'warningcode' => '1',
-                'message' => get_string('nocontent', 'mod_ncsubook')
-            );
+            $warnings       = [
+                                'item' => 'ncsubook',
+                                'itemid' => $ncsubook->id,
+                                'warningcode' => '1',
+                                'message' => get_string('nocontent', 'mod_ncsubook')
+                              ];
         } else {
-            $chapter = $DB->get_record('ncsubook_chapters', array('id' => $chapterid, 'ncsubookid' => $ncsubook->id));
-            $viewhidden = has_capability('mod/ncsubook:viewhiddenchapters', $context);
+            $chapter        = $DB->get_record('ncsubook_chapters', ['id' => $chapterid, 'ncsubookid' => $ncsubook->id]);
+            $viewhidden     = has_capability('mod/ncsubook:viewhiddenchapters', $context);
 
             if (!$chapter or ($chapter->hidden and !$viewhidden)) {
                 throw new moodle_exception('errorchapter', 'mod_ncsubook');
             }
 
             // Trigger the chapter viewed event.
-            $islastchapter = ($chapter->id == $lastchapterid) ? true : false;
+            $islastchapter  = ($chapter->id == $lastchapterid) ? true : false;
             ncsubook_view($ncsubook, $chapter, $islastchapter, $course, $cm, $context);
         }
 
-        $result = array();
-        $result['status'] = true;
+        $result['status']   = true;
         $result['warnings'] = $warnings;
         return $result;
     }
@@ -142,10 +135,10 @@ class mod_ncsubook_external extends external_api {
      */
     public static function view_ncsubook_returns() {
         return new external_single_structure(
-            array(
-                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'warnings' => new external_warnings()
-            )
+                [
+                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                 'warnings' => new external_warnings()
+                ]
         );
     }
 
@@ -157,11 +150,9 @@ class mod_ncsubook_external extends external_api {
      */
     public static function get_ncsubooks_by_courses_parameters() {
         return new external_function_parameters (
-            array(
-                'courseids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, array()
-                ),
-            )
+                [
+                  'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, []),
+                ]
         );
     }
 
@@ -173,13 +164,12 @@ class mod_ncsubook_external extends external_api {
      * @return array of ncsubooks details
      * @since Moodle 3.0
      */
-    public static function get_ncsubooks_by_courses($courseids = array()) {
+    public static function get_ncsubooks_by_courses($courseids = []) {
         global $CFG;
 
-        $returnedncsubooks = array();
-        $warnings = array();
-
-        $params = self::validate_parameters(self::get_ncsubooks_by_courses_parameters(), array('courseids' => $courseids));
+        $returnedncsubooks      = [];
+        $warnings               = [];
+        $params                 = self::validate_parameters(self::get_ncsubooks_by_courses_parameters(), ['courseids' => $courseids]);
 
         if (empty($params['courseids'])) {
             $params['courseids'] = array_keys(enrol_get_my_courses());
@@ -192,7 +182,7 @@ class mod_ncsubook_external extends external_api {
 
             // Get the ncsubooks in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
-            $ncsubooks = get_all_instances_in_courses("ncsubook", $courses);
+            $ncsubooks          = get_all_instances_in_courses("ncsubook", $courses);
             foreach ($ncsubooks as $ncsubook) {
                 $context = context_module::instance($ncsubook->coursemodule);
                 // Entry to return.
@@ -203,8 +193,13 @@ class mod_ncsubook_external extends external_api {
                 $ncsubookdetails['course']            = $ncsubook->course;
                 $ncsubookdetails['name']              = external_format_string($ncsubook->name, $context->id);
                 // Format intro.
-                list($ncsubookdetails['intro'], $ncsubookdetails['introformat']) =
-                    external_format_text($ncsubook->intro, $ncsubook->introformat, $context->id, 'mod_ncsubook', 'intro', null);
+                list($ncsubookdetails['intro'], $ncsubookdetails['introformat']) = external_format_text($ncsubook->intro,
+                                                                                                        $ncsubook->introformat,
+                                                                                                        $context->id,
+                                                                                                        'mod_ncsubook',
+                                                                                                        'intro',
+                                                                                                        null
+                                                                                                       );
                 $ncsubookdetails['numbering']         = $ncsubook->numbering;
                 $ncsubookdetails['navstyle']          = $ncsubook->navstyle;
                 $ncsubookdetails['customtitles']      = $ncsubook->customtitles;
@@ -221,9 +216,8 @@ class mod_ncsubook_external extends external_api {
                 $returnedncsubooks[] = $ncsubookdetails;
             }
         }
-        $result = array();
-        $result['ncsubooks'] = $returnedncsubooks;
-        $result['warnings'] = $warnings;
+        $result['ncsubooks']    = $returnedncsubooks;
+        $result['warnings']     = $warnings;
         return $result;
     }
 
@@ -235,31 +229,31 @@ class mod_ncsubook_external extends external_api {
      */
     public static function get_ncsubooks_by_courses_returns() {
         return new external_single_structure(
-            array(
-                'ncsubooks' => new external_multiple_structure(
+            [
+                'ncsubooks'     => new external_multiple_structure(
                     new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'NC State Book id'),
-                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_RAW, 'NC State Book name'),
-                            'intro' => new external_value(PARAM_RAW, 'The NC State Book intro'),
-                            'introformat' => new external_format_value('intro'),
-                            'numbering' => new external_value(PARAM_INT, 'NC State Book numbering configuration'),
-                            'navstyle' => new external_value(PARAM_INT, 'NC State Book navigation style configuration'),
-                            'customtitles' => new external_value(PARAM_INT, 'NC State Book custom titles type'),
-                            'revision' => new external_value(PARAM_INT, 'NC State Book revision', VALUE_OPTIONAL),
-                            'timecreated' => new external_value(PARAM_INT, 'Time of creation', VALUE_OPTIONAL),
-                            'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
-                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
-                            'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
-                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
-                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
-                        ), 'NC State Books'
+                        [
+                            'id'            => new external_value(PARAM_INT, 'NC State Book id'),
+                            'coursemodule'  => new external_value(PARAM_INT, 'Course module id'),
+                            'course'        => new external_value(PARAM_INT, 'Course id'),
+                            'name'          => new external_value(PARAM_RAW, 'NC State Book name'),
+                            'intro'         => new external_value(PARAM_RAW, 'The NC State Book intro'),
+                            'introformat'   => new external_format_value('intro'),
+                            'numbering'     => new external_value(PARAM_INT, 'NC State Book numbering configuration'),
+                            'navstyle'      => new external_value(PARAM_INT, 'NC State Book navigation style configuration'),
+                            'customtitles'  => new external_value(PARAM_INT, 'NC State Book custom titles type'),
+                            'revision'      => new external_value(PARAM_INT, 'NC State Book revision', VALUE_OPTIONAL),
+                            'timecreated'   => new external_value(PARAM_INT, 'Time of creation', VALUE_OPTIONAL),
+                            'timemodified'  => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
+                            'section'       => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
+                            'visible'       => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
+                            'groupmode'     => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
+                            'groupingid'    => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
+                        ], 'NC State Books'
                     )
                 ),
-                'warnings' => new external_warnings(),
-            )
+                'warnings'      => new external_warnings(),
+            ]
         );
     }
 

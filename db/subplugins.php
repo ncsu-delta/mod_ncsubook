@@ -15,15 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book module subplugin types declaration
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2011 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array(
-    'ncsubooktool'       => 'mod/ncsubook/tool',
-);
+$subplugins = ['ncsubooktool' => 'mod/ncsubook/tool'];

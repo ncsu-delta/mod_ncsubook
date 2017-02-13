@@ -15,11 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * IMSCP export lib
  *
  * @package    ncsubooktool_exportimscp
- * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -34,8 +41,8 @@ function ncsubooktool_exportimscp_extend_settings_navigation(settings_navigation
     global $PAGE;
 
     if (has_capability('ncsubooktool/exportimscp:export', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/ncsubook/tool/exportimscp/index.php', array('id'=>$PAGE->cm->id));
-        $icon = new pix_icon('generate', '', 'ncsubooktool_exportimscp', array('class'=>'icon'));
+        $url    = new moodle_url('/mod/ncsubook/tool/exportimscp/index.php', ['id' => $PAGE->cm->id]);
+        $icon   = new pix_icon('generate', '', 'ncsubooktool_exportimscp', ['class' => 'icon']);
 
         // Gary Harris - 4/23/2013
         // Commented out the following line for the Generate IMS CP link in the navigation sidebar because

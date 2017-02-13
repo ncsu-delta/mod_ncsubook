@@ -15,201 +15,204 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit ncsubook chapter
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-//var_dump($_POST);
-//die;
 
 require(dirname(__FILE__).'/../../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/edit_form.php');
 
-$cmid       = required_param('cmid', PARAM_INT);  // Book Course Module ID
-$chapterid  = required_param('chapterid', PARAM_INT); // Chapter ID
-
-$cm = get_coursemodule_from_id('ncsubook', $cmid, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-$ncsubook = $DB->get_record('ncsubook', array('id'=>$cm->instance), '*', MUST_EXIST);
+$cmid                                       = required_param('cmid', PARAM_INT);        // Book Course Module ID.
+$chapterid                                  = required_param('chapterid', PARAM_INT);   // Chapter ID.
+$cm                                         = get_coursemodule_from_id('ncsubook', $cmid, 0, false, MUST_EXIST);
+$course                                     = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$ncsubook                                   = $DB->get_record('ncsubook', ['id' => $cm->instance], '*', MUST_EXIST);
+$context                                    = context_module::instance($cm->id);
+$blocks                                     = ncsubook_get_block_list($chapterid);
+$chapter                                    = $DB->get_record('ncsubook_chapters', ['id' => $chapterid, 'ncsubookid' => $ncsubook->id], '*', MUST_EXIST);
+$chapter->cmid                              = $cm->id;
+$chapter->chapterid                         = $chapter->id;
 
 require_login($course, false, $cm);
-
-$context = context_module::instance($cm->id);
 require_capability('mod/ncsubook:edit', $context);
 
-$PAGE->set_url('/mod/ncsubook/edit.php', array('cmid'=>$cmid, 'chapterid'=>$chapterid));
+$options                                    = ['noclean'    => true,
+                                               'subdirs'    => true,
+                                               'maxfiles'   => -1,
+                                               'maxbytes'   => 0,
+                                               'context'    => $context
+                                              ];
+$editblockoptions                           = ['chapter'    => $chapter,
+                                               'blockdata'  => $blocks,
+                                               'options'    => $options,
+                                               'blockid'    => '',
+                                               'context'    => $context
+                                              ];
+
+// Setup the page display.
+$PAGE->set_title($ncsubook->name);
+$PAGE->set_heading($course->fullname);
+$PAGE->set_url('/mod/ncsubook/edit.php', ['cmid' => $cmid, 'chapterid' => $chapterid]);
 $PAGE->set_pagelayout('admin'); // TODO: Something. This is a bloody hack!
 
-$blocks = ncsubook_get_block_list($chapterid);
+$chapters                                   = ncsubook_preload_chapters($ncsubook);
+$edit                                       = $USER->editing;
 
-if ($chapterid) {
-    $chapter = $DB->get_record('ncsubook_chapters', array('id'=>$chapterid, 'ncsubookid'=>$ncsubook->id), '*', MUST_EXIST);
-}
+                                              // Get a list of the chapter types for the select menu on the form.
+$chaptertypes                               = $DB->get_records_select('ncsubook_chaptertype', 'sortorder > 0', [], 'sortorder ASC', 'id,name');
 
-$chapter->cmid = $cm->id;
-if (isset($chapter->id)) {
-    $chapter->chapterid = $chapter->id;
-}
+$mformbook                                  = new ncsubook_chapter_edit_form(null, ['chapter' => $chapter, 'options' => $options, 'chaptertypes' => $chaptertypes]);
+$mformmanageblocks                          = new ncsubook_manage_block_form( null, ['chapter' => $chapter, 'blockdata' => $blocks, 'options' => $options] );
 
-$options = array('noclean'=>true, 'subdirs'=>true, 'maxfiles'=>-1, 'maxbytes'=>0, 'context'=>$context);
+// The block_edit_form is only loaded to check if there is a submission, after we handle the data we will unset it because the edit will be gone.
+$mformeditblock                             = new ncsubook_block_edit_form( null, $editblockoptions);
+$mformaddblock                              = new ncsubook_add_block_form(null, ['chapter' => $chapter]);
 
-// Get a list of the chapter types for the select menu on the form
-$chaptertypes = $DB->get_records_select('ncsubook_chaptertype', 'sortorder > 0',array(),'sortorder ASC','id,name');
-
-$mform_book = new ncsubook_chapter_edit_form(null, array('chapter'=>$chapter, 'options'=>$options, 'chaptertypes'=>$chaptertypes));
-$mform_manage_blocks = new ncsubook_manage_block_form( null, array( 'chapter' => $chapter, 'blockdata' => $blocks, 'options' => $options ) );
-// The block_edit_form is only loaded to check if there is a submission, after we handle the data we will unset it because the edit will be gone
-$mform_edit_block = new ncsubook_block_edit_form( null, array( 'chapter' => $chapter, 'blockdata' => $blocks, 'options' => $options, 'blockid' => '', 'context' => $context ) );
-$mform_add_block = new ncsubook_add_block_form(null, array('chapter'=>$chapter));
-
-if ($mform_book->is_cancelled()) {
+if ($mformbook->is_cancelled()) {
     redirect("view.php?id=$cm->id");
 }
 
-// Let's process some data
-if ( $data_book = $mform_book->get_data() ) {
+// Let's process some data.
+if ($databook = $mformbook->get_data()) {
+   
     // Update the database with the new title and additional label.
-    if (!isset($data_book->showparenttitle)) {
-        $data_book->showparenttitle = '';
+    if (!isSet($databook->showparenttitle)) {
+        // I really don't think this is necessary if not set to begin with -- drl.
+        $databook->showparenttitle         = '';
     }
-    if (!isset($data_book->subchapter) || empty($data_book->subchapter)) {
-        $data_book->subchapter = '';
-        $data_book->showparenttitle = '';
+    if (!isSet($databook->subchapter) || empty($databook->subchapter)) {
+        $databook->subchapter              = '';
+        $databook->showparenttitle         = '';
     }
-    $fields = array( "id" => $data_book->chapterid, "title" => $data_book->title, "additionaltitle" => $data_book->additionaltitle, "subchapter" => $data_book->subchapter, "type" => $data_book->chaptertype, "showparenttitle" => $data_book->showparenttitle );
+
+    $fields                                 = ['id'                 => $databook->chapterid,
+                                               'title'              => $databook->title,
+                                               'additionaltitle'    => $databook->additionaltitle,
+                                               'subchapter'         => $databook->subchapter,
+                                               'type'               => $databook->chaptertype,
+                                               'showparenttitle'    => $databook->showparenttitle
+                                              ];
+
     ncsubook_update_chapter_info($fields);
 
-    $chapter->id = $data_book->chapterid;
-    $chapter->title = $data_book->title;
-    $chapter->additionaltitle = $data_book->additionaltitle;
-    $chapter->subchapter = $data_book->subchapter;
-    $chapter->type = $data_book->chaptertype;
-    $chapter->showparenttitle = $data_book->showparenttitle;
-
-    $params = array(
-        'context' => $context,
-        'objectid' => $fields['id']
-    );
-    $event = \mod_ncsubook\event\chapter_updated::create($params);
-    $event->add_record_snapshot('ncsubook_chapters', (object)$chapter);
+    $chapter->id                            = $databook->chapterid;
+    $chapter->title                         = $databook->title;
+    $chapter->additionaltitle               = $databook->additionaltitle;
+    $chapter->subchapter                    = $databook->subchapter;
+    $chapter->type                          = $databook->chaptertype;
+    $chapter->showparenttitle               = $databook->showparenttitle;
+    $params                                 = ['context' => $context, 'objectid' => $fields['id']];
+    $event                                  = \mod_ncsubook\event\chapter_updated::create($params);
+    $event->add_record_snapshot('ncsubook_chapters', $chapter);
     $event->trigger();
 
-    if (isset($data_book->submitbutton2)) {
-        redirect("../../course/view.php?id=$course->id");
-    }
+    isSet($databook->submitbutton2) ? redirect('../../course/view.php?id=' . $course->id) : '';
+    isSet($databook->submitbutton) ? redirect('view.php?id=' . $cm->id . '&chapterid=' . $databook->chapterid) : '';
 
-    if (isset($data_book->submitbutton)) {
-        redirect("view.php?id=$cm->id&chapterid=$data_book->chapterid");
-    }
-
-} elseif ( $data_manage_blocks = $mform_manage_blocks->get_data() ) {
-
-    if (isset($_POST['displayChapterPage'])) {
-        if ($_POST['displayChapterPage'] == 'Display This Page') {
-            redirect("view.php?id=$data_manage_blocks->cmid&chapterid=$data_manage_blocks->chapterid");
-        }
+} else if ($datamanageblocks = $mformmanageblocks->get_data()) {
+      
+    if (!empty($_POST['displayChapterPage'])) {
+        redirect('view.php?id=' . $datamanageblocks->cmid . '&chapterid=' . $datamanageblocks->chapterid);
     }
     // the form is submitted but the buttons don't actually pass databack.
     // search the POST variable
+    // this needs to be refactored. no need for two for loops or perhaps no need for a loop at all -- drl.
 
     // Let's see if someone pushed a delete block button.
-    foreach($_POST as $key => $value) {
-        $pos = strpos($key , "deleteblock-");
-        if ($pos === 0){
-            $deleteblockid = substr($key,12);
+    
+    foreach ($_POST as $key => $value) {
+        $pos                                = strpos($key , "deleteblock-");
+        if ($pos === 0) {
+            $deleteblockid                  = substr($key, 12);
         }
     }
 
     // Let's see if someone pushed an edit block button.
-    foreach($_POST as $key => $value) {
-        $pos = strpos($key , "editblock-");
-        if ($pos === 0){
-            $editblockid = substr($key,10);
+    foreach ($_POST as $key => $value) {
+        $pos                                = strpos($key , "editblock-");
+        if ($pos === 0) {
+            $editblockid                    = substr($key, 10);
         }
     }
 
-    if (isset($deleteblockid)) {
-        $deleteblocktype = ncsubook_get_blocktype($deleteblockid);
+    if (isSet($deleteblockid)) {
+        $deleteblocktype                    = ncsubook_get_blocktype($deleteblockid);
+
         foreach ($deleteblocktype as $value) {
-            $delblocktype = $value->type;
+            $delblocktype                   = $value->type;
         }
-        // We're getting the number of content type blocks so we can make sure that we don't delete
+
+        // We're getting the number of content type blocks so we can make sure that we don't delete.
         // the last one. Seen previous comments above.
-        $numcontentblocks = ncsubook_count_content_blocks($chapter->chapterid);
+        $numcontentblocks                   = ncsubook_count_content_blocks($chapter->chapterid);
+
         if ($delblocktype == 1 && $numcontentblocks <= 1) {
-            //Print error: Can't delete the last content block
+             // DRL - This was an empty if statement with only the comment below. Not sure what the intent was here yet.
+            // Print error: Can't delete the last content block.
         } else {
-            $DB->delete_records('ncsubook_blocks', array('id' => $deleteblockid));
-            $result = ncsubook_reorder_blocks($chapterid);
+            $DB->delete_records('ncsubook_blocks', ['id' => $deleteblockid]);
+            $result                         = ncsubook_reorder_blocks($chapterid);
         }
     }
 
-} elseif ( $data_block = $mform_add_block->get_data() ) {
+} else if ($datablock = $mformaddblock->get_data() ) {
 
-    $blocktype = $data_block->addnewblock;
+    $blocktype                              = $datablock->addnewblock;
     ncsubook_add_block($blocktype, $chapter->chapterid);
 
-} else {
-
-    // no forms have been submitted
-
 }
 
-// All the data processing is done.  We no longer need this old form (if it existed);
-unset($mform_edit_block);
+// All the data processing is done.  We no longer need this old form (if it existed).
+unset($mformeditblock);
 
-// Push the display to the page
-
-$PAGE->set_title($ncsubook->name);
-$PAGE->set_heading($course->fullname);
-
-$chapters = ncsubook_preload_chapters($ncsubook);
-$edit = $USER->editing;
 ncsubook_add_fake_block($chapters, $chapter, $ncsubook, $cm, $edit);
 
-if (isset($editblockid)) {
-    redirect("edit_block.php?cmid=$cm->id&chapterid=$chapterid&blockid=$editblockid");
-}
+isSet($editblockid) ? redirect('edit_block.php?cmid=' . $cm->id . '&chapterid=' . $chapterid . '&blockid=' . $editblockid) : '';
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('editingchapter', 'mod_ncsubook'));
 
-$mform_book->display();
+$mformbook->display();
 
-$blocks = ncsubook_get_block_list($chapterid);
+$blocks                                     = ncsubook_get_block_list($chapterid);
 
 echo $OUTPUT->heading(get_string('editingchapterpagecontent', 'mod_ncsubook'));
-$mform_manage_blocks = new ncsubook_manage_block_form( null, array( 'chapter' => $chapter, 'blockdata' => $blocks, 'options' => $options ) );
 
-$mform_manage_blocks->display();
+$mformmanageblocks                          = new ncsubook_manage_block_form( null, ['chapter' => $chapter, 'blockdata' => $blocks, 'options' => $options]);
 
-$mform_add_block->display();
+$mformmanageblocks->display();
 
-echo '<script type="text/javascript">
-<!--
-YUI().use(\'node\', function(Y){
-   var subchapter_checkbox = Y.one(\'input[id="id_subchapter"]\');
-   var parentchapter_checkbox = Y.one(\'input[id="id_showparenttitle"]\');
-   var parentchapter_label = Y.one(\'label[for="id_showparenttitle"]\');
-   checkSubchapter();
-   subchapter_checkbox.on(\'change\',checkSubchapter);
-   function checkSubchapter(){
-       if (subchapter_checkbox.get("checked")) {
-           parentchapter_label.show();
-           parentchapter_checkbox.show();
-       } else {
-           parentchapter_label.hide();
-           parentchapter_checkbox.hide();
-           parentchapter_checkbox.set(\'checked\',false);
+$mformaddblock->display();
+
+?>
+<script>
+
+    YUI().use(node, function(Y){
+       var subchapter_checkbox = Y.one(input[id="id_subchapter"]);
+       var parentchapter_checkbox = Y.one(input[id="id_showparenttitle"]);
+       var parentchapter_label = Y.one(label[for="id_showparenttitle"]);
+       checkSubchapter();
+       subchapter_checkbox.on(change,checkSubchapter);
+       function checkSubchapter(){
+           if (subchapter_checkbox.get("checked")) {
+               parentchapter_label.show();
+               parentchapter_checkbox.show();
+           } else {
+               parentchapter_label.hide();
+               parentchapter_checkbox.hide();
+               parentchapter_checkbox.set(checked,false);
+           }
        }
-   }
-});
--->
-</script>';
+    });
 
-
+</script>
+<?php
 echo $OUTPUT->footer();

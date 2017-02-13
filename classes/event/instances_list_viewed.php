@@ -15,11 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_ncsubook instances list viewed event.
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2013 Frédéric Massart
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_ncsubook\event;
@@ -50,7 +54,12 @@ class instances_list_viewed extends \core\event\course_module_instances_list_vie
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'ncsubook', 'view all', 'index.php?id=' . $this->courseid, '');
+        return [$this->courseid,
+                'ncsubook',
+                'view all',
+                'index.php?id=' . $this->courseid,
+                ''
+               ];
     }
 
     /**
@@ -68,7 +77,7 @@ class instances_list_viewed extends \core\event\course_module_instances_list_vie
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/ncsubook/index.php', array('id' => $this->courseid));
+        return new \moodle_url('/mod/ncsubook/index.php', ['id' => $this->courseid]);
     }
 
 }

@@ -15,33 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * Book import
  *
  * @package    ncsubooktool_importhtml
  * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
-require(dirname(__FILE__).'/../../../../config.php');
-require_once(dirname(__FILE__).'/locallib.php');
-require_once(dirname(__FILE__).'/import_form.php');
+require(dirname(__FILE__) . '/../../../../config.php');
+require_once(dirname(__FILE__) . '/locallib.php');
+require_once(dirname(__FILE__) . '/import_form.php');
 
-$id        = required_param('id', PARAM_INT);           // Course Module ID
-$chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
-
-$cm = get_coursemodule_from_id('ncsubook', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-$ncsubook = $DB->get_record('ncsubook', array('id'=>$cm->instance), '*', MUST_EXIST);
+$id         = required_param('id', PARAM_INT);           // Course Module ID
+$chapterid  = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
+$cm         = get_coursemodule_from_id('ncsubook', $id, 0, false, MUST_EXIST);
+$course     = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$ncsubook   = $DB->get_record('ncsubook', ['id' => $cm->instance], '*', MUST_EXIST);
+$context    = context_module::instance($cm->id);
 
 require_login($course, false, $cm);
 
-$context = context_module::instance($cm->id);
 require_capability('ncsubooktool/importhtml:import', $context);
 
-$PAGE->set_url('/mod/ncsubook/tool/importhtml/index.php', array('id'=>$id, 'chapterid'=>$chapterid));
+$PAGE->set_url('/mod/ncsubook/tool/importhtml/index.php', ['id' => $id, 'chapterid' => $chapterid]);
 
 if ($chapterid) {
-    if (!$chapter = $DB->get_record('ncsubook_chapters', array('id'=>$chapterid, 'ncsubookid'=>$ncsubook->id))) {
+    if (!$chapter = $DB->get_record('ncsubook_chapters', ['id' => $chapterid, 'ncsubookid' => $ncsubook->id])) {
         $chapterid = 0;
     }
 } else {
@@ -52,17 +59,16 @@ $PAGE->set_title($ncsubook->name);
 $PAGE->set_heading($course->fullname);
 
 // Prepare the page header.
-$strncsubook = get_string('modulename', 'mod_ncsubook');
-$strncsubooks = get_string('modulenameplural', 'mod_ncsubook');
-
-$mform = new ncsubooktool_importhtml_form(null, array('id'=>$id, 'chapterid'=>$chapterid));
+$strncsubook    = get_string('modulename', 'mod_ncsubook');
+$strncsubooks   = get_string('modulenameplural', 'mod_ncsubook');
+$mform          = new ncsubooktool_importhtml_form(null, ['id' => $id, 'chapterid' => $chapterid]);
 
 // If data submitted, then process and store.
 if ($mform->is_cancelled()) {
     if (empty($chapter->id)) {
-        redirect($CFG->wwwroot."/mod/ncsubook/view.php?id=$cm->id");
+        redirect($CFG->wwwroot . '/mod/ncsubook/view.php?id=' . $cm->id);
     } else {
-        redirect($CFG->wwwroot."/mod/ncsubook/view.php?id=$cm->id&chapterid=$chapter->id");
+        redirect($CFG->wwwroot . '/mod/ncsubook/view.php?id=' . $cm->id . '&chapterid=' . $chapter->id);
     }
 
 } else if ($data = $mform->get_data()) {
@@ -70,15 +76,15 @@ if ($mform->is_cancelled()) {
     echo $OUTPUT->heading(get_string('importingchapters', 'ncsubooktool_importhtml'));
 
     // this is a bloody hack - children do not try this at home!
-    $fs = get_file_storage();
-    $draftid = file_get_submitted_draft_itemid('importfile');
+    $fs         = get_file_storage();
+    $draftid    = file_get_submitted_draft_itemid('importfile');
     if (!$files = $fs->get_area_files(context_user::instance($USER->id)->id, 'user', 'draft', $draftid, 'id DESC', false)) {
         redirect($PAGE->url);
     }
     $file = reset($files);
     toolncsubook_importhtml_import_chapters($file, $data->type, $ncsubook, $context);
 
-    echo $OUTPUT->continue_button(new moodle_url('/mod/ncsubook/view.php', array('id'=>$id)));
+    echo $OUTPUT->continue_button(new moodle_url('/mod/ncsubook/view.php', ['id' => $id]));
     echo $OUTPUT->footer();
     die;
 }

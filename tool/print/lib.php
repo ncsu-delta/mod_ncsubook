@@ -15,11 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * Print lib
  *
  * @package    ncsubooktool_print
  * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -39,14 +47,14 @@ function ncsubooktool_print_extend_settings_navigation(settings_navigation $sett
     }
 
     if (has_capability('ncsubooktool/print:print', $PAGE->cm->context)) {
-        $url1 = new moodle_url('/mod/ncsubook/tool/print/index.php', array('id'=>$params['id']));
-        $url2 = new moodle_url('/mod/ncsubook/tool/print/index.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
+        $url1   = new moodle_url('/mod/ncsubook/tool/print/index.php', ['id' => $params['id']]);
+        $url2   = new moodle_url('/mod/ncsubook/tool/print/index.php', ['id' => $params['id'], 'chapterid' => $params['chapterid']]);
         $action = new action_link($url1, get_string('printncsubook', 'ncsubooktool_print'), new popup_action('click', $url1));
         $node->add(get_string('printncsubook', 'ncsubooktool_print'), $action, navigation_node::TYPE_SETTING, null, null,
-                new pix_icon('book', '', 'ncsubooktool_print', array('class'=>'icon')));
+                new pix_icon('book', '', 'ncsubooktool_print', ['class' => 'icon']));
         $action = new action_link($url2, get_string('printchapter', 'ncsubooktool_print'), new popup_action('click', $url2));
         $node->add(get_string('printchapter', 'ncsubooktool_print'), $action, navigation_node::TYPE_SETTING, null, null,
-                new pix_icon('chapter', '', 'ncsubooktool_print', array('class'=>'icon')));
+                new pix_icon('chapter', '', 'ncsubooktool_print', ['class' => 'icon']));
     }
 }
 

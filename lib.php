@@ -15,11 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book module core interaction API
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -29,16 +33,15 @@ defined('MOODLE_INTERNAL') || die;
  * @return array
  */
 function ncsubook_get_numbering_types() {
-    global $CFG; // required for the include
+    global $CFG; // Required for the include.
 
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(dirname(__FILE__) . '/locallib.php');
 
-    return array (
-        NCSU_BOOK_NUM_NONE       => get_string('numbering0', 'mod_ncsubook'),
-        NCSU_BOOK_NUM_NUMBERS    => get_string('numbering1', 'mod_ncsubook'),
-        NCSU_BOOK_NUM_BULLETS    => get_string('numbering2', 'mod_ncsubook'),
-        NCSU_BOOK_NUM_INDENTED   => get_string('numbering3', 'mod_ncsubook')
-    );
+    return                                  [NCSU_BOOK_NUM_NONE => get_string('numbering0', 'mod_ncsubook'),
+                                             NCSU_BOOK_NUM_NUMBERS => get_string('numbering1', 'mod_ncsubook'),
+                                             NCSU_BOOK_NUM_BULLETS => get_string('numbering2', 'mod_ncsubook'),
+                                             NCSU_BOOK_NUM_INDENTED => get_string('numbering3', 'mod_ncsubook')
+                                            ];
 }
 
 /**
@@ -46,7 +49,7 @@ function ncsubook_get_numbering_types() {
  * @return array
  */
 function ncsubook_get_extra_capabilities() {
-    // used for group-members-only
+    // Used for group-members-only.
     return array('moodle/site:accessallgroups');
 }
 
@@ -60,8 +63,8 @@ function ncsubook_get_extra_capabilities() {
 function ncsubook_add_instance($data, $mform) {
     global $DB;
 
-    $data->timecreated = time();
-    $data->timemodified = $data->timecreated;
+    $data->timecreated                      = time();
+    $data->timemodified                     = $data->timecreated;
 
     return $DB->insert_record('ncsubook', $data);
 }
@@ -76,13 +79,14 @@ function ncsubook_add_instance($data, $mform) {
 function ncsubook_update_instance($data, $mform) {
     global $DB;
 
-    $data->timemodified = time();
-    $data->id = $data->instance;
+    $data->timemodified                     = time();
+    $data->id                               = $data->instance;
 
     $DB->update_record('ncsubook', $data);
 
-    $ncsubook = $DB->get_record('ncsubook', array('id'=>$data->id));
-    $DB->set_field('ncsubook', 'revision', $ncsubook->revision+1, array('id'=>$ncsubook->id));
+    $ncsubook                               = $DB->get_record('ncsubook', ['id' => $data->id]);
+
+    $DB->set_field('ncsubook', 'revision', $ncsubook->revision + 1, ['id' => $ncsubook->id]);
 
     return true;
 }
@@ -96,21 +100,22 @@ function ncsubook_update_instance($data, $mform) {
 function ncsubook_delete_instance($id) {
     global $DB;
 
-    if (!$ncsubook = $DB->get_record('ncsubook', array('id'=>$id))) {
+    if (!$ncsubook = $DB->get_record('ncsubook', ['id' => $id])) {
         return false;
     }
 
-    // Gary Harris - 4/8/2013
-    // Added the following delete statement to delete the blocks when deleting a whole NC State Book
-    // End GDH
-    $sql = "delete from mdl_ncsubook_blocks
-            where  chapterid in (select id
-                                 from  mdl_ncsubook_chapters
-                                 where ncsubookid = ?)";
-    $DB->execute($sql, array($ncsubook->id));
+    // Gary Harris - 4/8/2013.
+    // Added the following delete statement to delete the blocks when deleting a whole NC State Book.
+    // End GDH.
+    $sql = 'DELETE
+                FROM {ncsubook_blocks}
+                WHERE  chapterid IN (SELECT id
+                                        FROM  {ncsubook_chapters}
+                                        WHERE ncsubookid = ?)';
+    $DB->execute($sql, [$ncsubook->id]);
 
-    $DB->delete_records('ncsubook_chapters', array('ncsubookid'=>$ncsubook->id));
-    $DB->delete_records('ncsubook', array('id'=>$ncsubook->id));
+    $DB->delete_records('ncsubook_chapters', ['ncsubookid' => $ncsubook->id]);
+    $DB->delete_records('ncsubook', ['id' => $ncsubook->id]);
 
     return true;
 }
@@ -127,15 +132,13 @@ function ncsubook_delete_instance($id) {
 function ncsubook_user_outline($course, $user, $mod, $ncsubook) {
     global $DB;
 
-    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'ncsubook',
-                                              'action'=>'view', 'info'=>$ncsubook->id), 'time ASC')) {
+    if ($logs = $DB->get_records('log', ['userid' => $user->id, 'module' => 'ncsubook', 'action' => 'view', 'info' => $ncsubook->id], 'time ASC')) {
 
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-
-        $result = new stdClass();
-        $result->info = get_string('numviews', '', $numviews);
-        $result->time = $lastlog->time;
+        $numviews                           = count($logs);
+        $lastlog                            = array_pop($logs);
+        $result                             = new stdClass();
+        $result->info                       = get_string('numviews', '', $numviews);
+        $result->time                       = $lastlog->time;
 
         return $result;
     }
@@ -166,7 +169,7 @@ function ncsubook_user_complete($course, $user, $mod, $ncsubook) {
  * @return bool true if there was output, or false is there was none
  */
 function ncsubook_print_recent_activity($course, $viewfullnames, $timestart) {
-    return false;  //  True if anything was printed, otherwise false
+    return false;  // True if anything was printed, otherwise false.
 }
 
 /**
@@ -228,19 +231,19 @@ function ncsubook_scale_used_anywhere($scaleid) {
  * @return array
  */
 function ncsubook_get_view_actions() {
-    global $CFG; // necessary for includes
+    global $CFG;
 
-    $return = array('view', 'view all');
+    $return                                 = ['view', 'view all'];
+    $plugins                                = get_plugin_list('ncsubooktool');
 
-    $plugins = get_plugin_list('ncsubooktool');
     foreach ($plugins as $plugin => $dir) {
-        if (file_exists("$dir/lib.php")) {
-            require_once("$dir/lib.php");
+        if (file_exists($dir . '/lib.php')) {
+            require_once($dir . '/lib.php');
         }
-        $function = 'ncsubooktool_'.$plugin.'_get_view_actions';
+        $function                           = 'ncsubooktool_' . $plugin . '_get_view_actions';
         if (function_exists($function)) {
             if ($actions = $function()) {
-                $return = array_merge($return, $actions);
+                $return                     = array_merge($return, $actions);
             }
         }
     }
@@ -253,19 +256,19 @@ function ncsubook_get_view_actions() {
  * @return array
  */
 function ncsubook_get_post_actions() {
-    global $CFG; // necessary for includes
+    global $CFG;
 
-    $return = array('update');
+    $return                                 = ['update'];
 
-    $plugins = get_plugin_list('ncsubooktool');
+    $plugins                                = get_plugin_list('ncsubooktool');
     foreach ($plugins as $plugin => $dir) {
-        if (file_exists("$dir/lib.php")) {
-            require_once("$dir/lib.php");
+        if (file_exists($dir . '/lib.php')) {
+            require_once($dir . '/lib.php');
         }
-        $function = 'ncsubooktool_'.$plugin.'_get_post_actions';
+        $function                           = 'ncsubooktool_' . $plugin . '_get_post_actions';
         if (function_exists($function)) {
             if ($actions = $function()) {
-                $return = array_merge($return, $actions);
+                $return                     = array_merge($return, $actions);
             }
         }
     }
@@ -281,18 +284,38 @@ function ncsubook_get_post_actions() {
  */
 function ncsubook_supports($feature) {
     switch($feature) {
-        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return false;
-        case FEATURE_GRADE_OUTCOMES:          return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
-
-        default: return null;
+        case FEATURE_MOD_ARCHETYPE :
+            return MOD_ARCHETYPE_RESOURCE;
+        break;
+        case FEATURE_GROUPS :
+            return false;
+        break;
+        case FEATURE_GROUPINGS :
+            return false;
+        break;
+        case FEATURE_GROUPMEMBERSONLY :
+            return true;
+        break;
+        case FEATURE_MOD_INTRO :
+            return true;
+        break;
+        case FEATURE_COMPLETION_TRACKS_VIEWS :
+            return true;
+        break;
+        case FEATURE_GRADE_HAS_GRADE :
+            return false;
+        break;
+        case FEATURE_GRADE_OUTCOMES :
+            return false;
+        break;
+        case FEATURE_BACKUP_MOODLE2 :
+            return true;
+        break;
+        case FEATURE_SHOW_DESCRIPTION :
+            return true;
+        break;
+        default :
+            return null;
     }
 }
 
@@ -316,20 +339,6 @@ function ncsubook_extend_settings_navigation(settings_navigation $settingsnav, n
             $function($settingsnav, $ncsubooknode);
         }
     }
-
-    /* $params = $PAGE->url->params();
-
-    if (!empty($params['id']) and !empty($params['chapterid']) and has_capability('mod/ncsubook:edit', $PAGE->cm->context)) {
-        if (!empty($USER->editing)) {
-            $string = get_string("turneditingoff");
-            $edit = '0';
-        } else {
-            $string = get_string("turneditingon");
-            $edit = '1';
-        }
-        $url = new moodle_url('/mod/ncsubook/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
-        $ncsubooknode->add($string, $url, navigation_node::TYPE_SETTING);
-    } */
 }
 
 
@@ -341,8 +350,8 @@ function ncsubook_extend_settings_navigation(settings_navigation $settingsnav, n
  * @return array
  */
 function ncsubook_get_file_areas($course, $cm, $context) {
-    $areas = array();
-    $areas['chapter'] = get_string('chapters', 'mod_ncsubook');
+    $areas                                  = array();
+    $areas['chapter']                       = get_string('chapters', 'mod_ncsubook');
     return $areas;
 }
 
@@ -362,7 +371,7 @@ function ncsubook_get_file_areas($course, $cm, $context) {
 function ncsubook_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     global $CFG, $DB;
 
-    // note: 'intro' area is handled in file_browser automatically
+    // Note: 'intro' area is handled in file_browser automatically.
 
     if (!has_capability('mod/ncsubook:read', $context)) {
         return null;
@@ -378,20 +387,21 @@ function ncsubook_get_file_info($browser, $areas, $course, $cm, $context, $filea
         return new ncsubook_file_info($browser, $course, $cm, $context, $areas, $filearea);
     }
 
-    $fs = get_file_storage();
-    $filepath = is_null($filepath) ? '/' : $filepath;
-    $filename = is_null($filename) ? '.' : $filename;
+    $fs                                     = get_file_storage();
+    $filepath                               = is_null($filepath) ? '/' : $filepath;
+    $filename                               = is_null($filename) ? '.' : $filename;
+
     if (!$storedfile = $fs->get_file($context->id, 'mod_ncsubook', $filearea, $itemid, $filepath, $filename)) {
         return null;
     }
 
-    // modifications may be tricky - may cause caching problems
-    $canwrite = has_capability('mod/ncsubook:edit', $context);
+    // Modifications may be tricky - may cause caching problems.
+    $canwrite                               = has_capability('mod/ncsubook:edit', $context);
 
-    $chaptername = $DB->get_field('ncsubook_chapters', 'title', array('ncsubookid'=>$cm->instance, 'id'=>$itemid));
-    $chaptername = format_string($chaptername, true, array('context'=>$context));
+    $chaptername                            = $DB->get_field('ncsubook_chapters', 'title', ['ncsubookid' => $cm->instance, 'id' => $itemid]);
+    $chaptername                            = format_string($chaptername, true, ['context' => $context]);
+    $urlbase                                = $CFG->wwwroot.'/pluginfile.php';
 
-    $urlbase = $CFG->wwwroot.'/pluginfile.php';
     return new file_info_stored($browser, $context, $storedfile, $urlbase, $chaptername, true, true, $canwrite, false);
 }
 
@@ -407,7 +417,7 @@ function ncsubook_get_file_info($browser, $areas, $course, $cm, $context, $filea
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function ncsubook_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function ncsubook_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -424,13 +434,13 @@ function ncsubook_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
         return false;
     }
 
-    $chid = (int)array_shift($args);
+    $chid                                   = (int) array_shift($args);
 
-    if (!$ncsubook = $DB->get_record('ncsubook', array('id'=>$cm->instance))) {
+    if (!$ncsubook = $DB->get_record('ncsubook', ['id' => $cm->instance])) {
         return false;
     }
 
-    if (!$chapter = $DB->get_record('ncsubook_chapters', array('id'=>$chid, 'ncsubookid'=>$ncsubook->id))) {
+    if (!$chapter = $DB->get_record('ncsubook_chapters', ['id' => $chid, 'ncsubookid' => $ncsubook->id])) {
         return false;
     }
 
@@ -438,20 +448,21 @@ function ncsubook_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
         return false;
     }
 
-    $fs = get_file_storage();
-    $relativepath = implode('/', $args);
-    $fullpath = "/$context->id/mod_ncsubook/chapter/$chid/$relativepath";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        // dont give up yet, check the legacy files.
-        $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
-        $pathhash = $fs->get_pathname_hash($course_context->id, "course", "legacy", "0", "/".$relativepath, "");
+    $fs                                     = get_file_storage();
+    $relativepath                           = implode('/', $args);
+    $fullpath                               = "/$context->id/mod_ncsubook/chapter/$chid/$relativepath";
 
-        if(!$file = $fs->get_file_by_hash($pathhash) or $file->is_directory()) {
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        // Dont give up yet, check the legacy files.
+        $coursecontext                     = get_context_instance(CONTEXT_COURSE, $course->id);
+        $pathhash                           = $fs->get_pathname_hash($coursecontext->id, "course", "legacy", "0", "/".$relativepath, "");
+
+        if (!$file = $fs->get_file_by_hash($pathhash) or $file->is_directory()) {
             return false;
         }
     }
 
-    // finally send the file
+    // Finally send the file.
     send_stored_file($file, 360, 0, $forcedownload, $options);
 }
 
@@ -464,6 +475,6 @@ function ncsubook_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
  * @return array
  */
 function ncsubook_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    $module_pagetype = array('mod-ncsubook-*'=>get_string('page-mod-ncsubook-x', 'mod_ncsubook'));
-    return $module_pagetype;
+    $modulepagetype                         = ['mod-ncsubook-*' => get_string('page-mod-ncsubook-x', 'mod_ncsubook')];
+    return $modulepagetype;
 }

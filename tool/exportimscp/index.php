@@ -15,6 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * Book IMSCP export plugin
  *
  * @package    ncsubooktool_exportimscp
@@ -22,21 +28,22 @@
  * @copyright  2001-3001 Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @copyright  2011 Petr Skoda                   {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
-require(dirname(__FILE__).'/../../../../config.php');
-require_once(dirname(__FILE__).'/locallib.php');
-require_once($CFG->dirroot.'/mod/ncsubook/locallib.php');
-require_once($CFG->dirroot.'/backup/lib.php');
-require_once($CFG->libdir.'/filelib.php');
+require(dirname(__FILE__) . '/../../../../config.php');
+require_once(dirname(__FILE__) . '/locallib.php');
+require_once($CFG->dirroot . '/mod/ncsubook/locallib.php');
+require_once($CFG->dirroot . '/backup/lib.php');
+require_once($CFG->libdir . '/filelib.php');
 
-$id = required_param('id', PARAM_INT);           // Course Module ID
+$id         = required_param('id', PARAM_INT);           // Course Module ID
+$cm         = get_coursemodule_from_id('ncsubook', $id, 0, false, MUST_EXIST);
+$course     = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$ncsubook   = $DB->get_record('ncsubook', ['id' => $cm->instance], '*', MUST_EXIST);
 
-$cm = get_coursemodule_from_id('ncsubook', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-$ncsubook = $DB->get_record('ncsubook', array('id'=>$cm->instance), '*', MUST_EXIST);
-
-$PAGE->set_url('/mod/ncsubook/tool/exportimscp/index.php', array('id'=>$id));
+$PAGE->set_url('/mod/ncsubook/tool/exportimscp/index.php', ['id' => $id]);
 
 require_login($course, false, $cm);
 
@@ -48,4 +55,4 @@ require_capability('ncsubooktool/exportimscp:export', $context);
 
 $file = ncsubooktool_exportimscp_build_package($ncsubook, $context);
 
-send_stored_file($file, 10, 0, true, array('filename' => clean_filename($ncsubook->name).'.zip'));
+send_stored_file($file, 10, 0, true, ['filename' => clean_filename($ncsubook->name) . '.zip']);

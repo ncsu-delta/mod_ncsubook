@@ -15,15 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * NC State Book module language strings
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2004-2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
-
+$string['actionbuttons'] = 'Action buttons';
 $string['modulename'] = 'NC State Book';
 $string['modulename_help'] = 'The NC State Book module enables a teacher to create a multi-page resource in a book-like format, with pages and subpages for organization. NC State Books can contain media files as well as text and are useful for displaying lengthy passages of information which can be broken down into sections.
 

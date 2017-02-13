@@ -15,15 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * Book import plugin version info
  *
  * @package    ncsubooktool_importhtml
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = 'ncsubooktool_importhtml'; // Full name of the plugin (used for diagnostics)
-$plugin->version   = 2012061700; // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2017011800; // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2012061700; // Requires this Moodle version

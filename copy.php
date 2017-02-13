@@ -15,13 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Copy ncsubook chapter
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 require(dirname(__FILE__).'/../../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
@@ -34,7 +37,7 @@ $cm                                         = get_coursemodule_from_id('ncsubook
 $course                                     = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 $ncsubook                                   = $DB->get_record('ncsubook', ['id' => $cm->instance], '*', MUST_EXIST);
 $chapter                                    = $DB->get_record('ncsubook_chapters', ['id' => $chapterid, 'ncsubookid' => $ncsubook->id], '*', MUST_EXIST);
-$ncsubookblocks                            = $DB->get_records_select('ncsubook_blocks', "chapterid = " . $chapterid);
+$ncsubookblocks                             = $DB->get_records_select('ncsubook_blocks', "chapterid = " . $chapterid);
 
 // Setup the new chapter object we are copying..
 $newchapter                                 = new StdClass;

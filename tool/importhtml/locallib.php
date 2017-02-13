@@ -15,17 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * HTML import lib
  *
  * @package    ncsubooktool_importhtml
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once(dirname(__FILE__).'/lib.php');
-require_once($CFG->dirroot.'/mod/ncsubook/locallib.php');
+require_once(dirname(__FILE__) . '/lib.php');
+require_once($CFG->dirroot . '/mod/ncsubook/locallib.php');
 
 /**
  * Import HTML pages packaged into one zip archive
@@ -39,37 +47,36 @@ require_once($CFG->dirroot.'/mod/ncsubook/locallib.php');
 function toolncsubook_importhtml_import_chapters($package, $type, $ncsubook, $context, $verbose = true) {
     global $DB, $OUTPUT;
 
-    $fs = get_file_storage();
-    $chapterfiles = toolncsubook_importhtml_get_chapter_files($package, $type);
-    $packer = get_file_packer('application/zip');
+    $fs             = get_file_storage();
+    $chapterfiles   = toolncsubook_importhtml_get_chapter_files($package, $type);
+    $packer         = get_file_packer('application/zip');
+    $chapters       = [];
     $fs->delete_area_files($context->id, 'mod_ncsubook', 'importhtmltemp', 0);
     $package->extract_to_storage($packer, $context->id, 'mod_ncsubook', 'importhtmltemp', 0, '/');
+
     // $datafiles = $fs->get_area_files($context->id, 'mod_ncsubook', 'importhtmltemp', 0, 'id', false);
     // echo "<pre>";p(var_export($datafiles, true));
-
-    $chapters = array();
-
     if ($verbose) {
         echo $OUTPUT->notification(get_string('importing', 'ncsubooktool_importhtml'), 'notifysuccess');
     }
     if ($type == 0) {
         $chapterfile = reset($chapterfiles);
-        if ($file = $fs->get_file_by_hash("$context->id/mod_ncsubook/importhtmltemp/0/$chapterfile->pathname")) {
+        if ($file = $fs->get_file_by_hash($context->id . '/mod_ncsubook/importhtmltemp/0/' . $chapterfile->pathname)) {
             $htmlcontent = toolncsubook_importhtml_fix_encoding($file->get_content());
             $htmlchapters = toolncsubook_importhtml_parse_headings(toolncsubook_importhtml_parse_body($htmlcontent));
             // TODO: process h1 as main chapter and h2 as subchapters
         }
     } else {
         foreach ($chapterfiles as $chapterfile) {
-            if ($file = $fs->get_file_by_hash(sha1("/$context->id/mod_ncsubook/importhtmltemp/0/$chapterfile->pathname"))) {
+            if ($file = $fs->get_file_by_hash(sha1('/' . $context->id . '/mod_ncsubook/importhtmltemp/0/' . $chapterfile->pathname))) {
                 $chapter = new stdClass();
                 $htmlcontent = toolncsubook_importhtml_fix_encoding($file->get_content());
 
-                $chapter->ncsubookid        = $ncsubook->id;
-                $chapter->pagenum       = $DB->get_field_sql('SELECT MAX(pagenum) FROM {ncsubook_chapters} WHERE ncsubookid = ?', array($ncsubook->id)) + 1;
-                $chapter->importsrc     = '/'.$chapterfile->pathname;
+                $chapter->ncsubookid    = $ncsubook->id;
+                $chapter->pagenum       = $DB->get_field_sql('SELECT MAX(pagenum) FROM {ncsubook_chapters} WHERE ncsubookid = ?', [$ncsubook->id]) + 1;
+                $chapter->importsrc     = directory_separator . $chapterfile->pathname;
                 $chapter->content       = toolncsubook_importhtml_parse_styles($htmlcontent);
-                $chapter->content       .= toolncsubook_importhtml_parse_body($htmlcontent);
+                                        . toolncsubook_importhtml_parse_body($htmlcontent);
                 $chapter->title         = toolncsubook_importhtml_parse_title($htmlcontent, $chapterfile->pathname);
                 $chapter->contentformat = FORMAT_HTML;
                 $chapter->hidden        = 0;
@@ -92,12 +99,12 @@ function toolncsubook_importhtml_import_chapters($package, $type, $ncsubook, $co
     if ($verbose) {
         echo $OUTPUT->notification(get_string('relinking', 'ncsubooktool_importhtml'), 'notifysuccess');
     }
-    $allchapters = $DB->get_records('ncsubook_chapters', array('ncsubookid'=>$ncsubook->id), 'pagenum');
+    $allchapters = $DB->get_records('ncsubook_chapters', ['ncsubookid' => $ncsubook->id], 'pagenum');
     foreach ($chapters as $chapter) {
         // find references to all files and copy them + relink them
         $matches = null;
         if (preg_match_all('/(src|codebase|name|href)\s*=\s*"([^"]+)"/i', $chapter->content, $matches)) {
-            $file_record = array('contextid'=>$context->id, 'component'=>'mod_ncsubook', 'filearea'=>'chapter', 'itemid'=>$chapter->id);
+            $filerecord = ['contextid' => $context->id, 'component' => 'mod_ncsubook', 'filearea' => 'chapter', 'itemid' => $chapter->id];
             foreach ($matches[0] as $i => $match) {
                 $filepath = dirname($chapter->importsrc).'/'.$matches[2][$i];
                 $filepath = toolncsubook_importhtml_fix_path($filepath);
@@ -111,22 +118,22 @@ function toolncsubook_importhtml_import_chapters($package, $type, $ncsubook, $co
                     }
                 }
 
-                if ($file = $fs->get_file_by_hash(sha1("/$context->id/mod_ncsubook/importhtmltemp/0$filepath"))) {
-                    if (!$oldfile = $fs->get_file_by_hash(sha1("/$context->id/mod_ncsubook/chapter/$chapter->id$filepath"))) {
-                        $fs->create_file_from_storedfile($file_record, $file);
+                if ($file = $fs->get_file_by_hash(sha1('/' . $context->id . '/mod_ncsubook/importhtmltemp/0' . $filepath))) {
+                    if (!$oldfile = $fs->get_file_by_hash(sha1('/' . $context->id . '/mod_ncsubook/chapter/' . $chapter->id . $filepath))) {
+                        $fs->create_file_from_storedfile($filerecord, $file);
                     }
-                    $chapter->content = str_replace($match, $matches[1][$i].'="@@PLUGINFILE@@'.$filepath.'"', $chapter->content);
+                    $chapter->content = str_replace($match, $matches[1][$i] . '="@@PLUGINFILE@@' . $filepath .'"', $chapter->content);
                 }
             }
-            $DB->set_field('ncsubook_chapters', 'content', $chapter->content, array('id'=>$chapter->id));
+            $DB->set_field('ncsubook_chapters', 'content', $chapter->content, ['id' => $chapter->id]);
         }
     }
     unset($chapters);
 
-    $allchapters = $DB->get_records('ncsubook_chapters', array('ncsubookid'=>$ncsubook->id), 'pagenum');
+    $allchapters = $DB->get_records('ncsubook_chapters', ['ncsubookid' => $ncsubook->id], 'pagenum');
     foreach ($allchapters as $chapter) {
         $newcontent = $chapter->content;
-        $matches = null;
+        $matches    = null;
         if (preg_match_all('/(href)\s*=\s*"([^"]+)"/i', $chapter->content, $matches)) {
             foreach ($matches[0] as $i => $match) {
                 if (strpos($matches[2][$i], ':') !== false or strpos($matches[2][$i], '@') !== false) {
@@ -137,22 +144,24 @@ function toolncsubook_importhtml_import_chapters($package, $type, $ncsubook, $co
                 $chapterpath = toolncsubook_importhtml_fix_path($chapterpath);
                 foreach ($allchapters as $target) {
                     if ($target->importsrc === $chapterpath) {
-                        $newcontent = str_replace($match, 'href="'.new moodle_url('/mod/ncsubook/view.php',
-                                array('id'=>$context->instanceid, 'chapter'=>$target->id)).'"', $newcontent);
+                        $newcontent = str_replace($match, 'href="'
+                                                    . new moodle_url('/mod/ncsubook/view.php', ['id' => $context->instanceid, 'chapter' => $target->id])
+                                                    . '"', $newcontent
+                                                 );
                     }
                 }
             }
         }
         if ($newcontent !== $chapter->content) {
-            $DB->set_field('ncsubook_chapters', 'content', $newcontent, array('id'=>$chapter->id));
+            $DB->set_field('ncsubook_chapters', 'content', $newcontent, ['id' => $chapter->id]);
         }
     }
 
     $fs->delete_area_files($context->id, 'mod_ncsubook', 'importhtmltemp', 0);
 
     // update the revision flag - this takes a long time, better to refetch the current value
-    $ncsubook = $DB->get_record('ncsubook', array('id'=>$ncsubook->id));
-    $DB->set_field('ncsubook', 'revision', $ncsubook->revision+1, array('id'=>$ncsubook->id));
+    $ncsubook = $DB->get_record('ncsubook', ['id' => $ncsubook->id]);
+    $DB->set_field('ncsubook', 'revision', $ncsubook->revision + 1, ['id' => $ncsubook->id]);
 }
 
 /**
@@ -176,8 +185,9 @@ function toolncsubook_importhtml_parse_styles($html) {
     if (preg_match('/<head[^>]*>(.+)<\/head>/is', $html, $matches)) {
         $head = $matches[1];
         if (preg_match_all('/<link[^>]+rel="stylesheet"[^>]*>/i', $head, $matches)) { // Extract links to css.
-            for ($i=0; $i<count($matches[0]); $i++) {
-                $styles .= $matches[0][$i]."\n";
+            $matchcount = count($matches[0]);
+            for ($i = 0; $i < $matchcount; $i++) {
+                $styles .= $matches[0][$i] . "\n";
             }
         }
     }
@@ -192,10 +202,10 @@ function toolncsubook_importhtml_parse_styles($html) {
  */
 function toolncsubook_importhtml_fix_path($path) {
     $path = str_replace('\\', '/', $path); // anti MS hack
-    $path = '/'.ltrim($path, './'); // dirname() produces . for top level files + our paths start with /
+    $path = directory_separator . ltrim($path, './'); // dirname() produces . for top level files + our paths start with /
+    $cnt  = substr_count($path, '..');
 
-    $cnt = substr_count($path, '..');
-    for ($i=0; $i<$cnt; $i++) {
+    for ($i = 0; $i < $cnt; $i++) {
         $path = preg_replace('|[^/]+/\.\./|', '', $path, 1);
     }
 
@@ -260,11 +270,11 @@ function toolncsubook_importhtml_parse_title($html, $default) {
  * @return array the html files found in the package
  */
 function toolncsubook_importhtml_get_chapter_files($package, $type) {
-    $packer = get_file_packer('application/zip');
-    $files = $package->list_files($packer);
-    $tophtmlfiles = array();
-    $subhtmlfiles = array();
-    $topdirs = array();
+    $packer         = get_file_packer('application/zip');
+    $files          = $package->list_files($packer);
+    $tophtmlfiles   = [];
+    $subhtmlfiles   = [];
+    $topdirs        = [];
 
     foreach ($files as $file) {
         if (empty($file->pathname)) {
@@ -302,7 +312,7 @@ function toolncsubook_importhtml_get_chapter_files($package, $type) {
     collatorlib::ksort($subhtmlfiles, collatorlib::SORT_NATURAL);
     collatorlib::ksort($topdirs, collatorlib::SORT_NATURAL);
 
-    $chapterfiles = array();
+    $chapterfiles = [];
 
     if ($type == 2) {
         $chapterfiles = $tophtmlfiles;

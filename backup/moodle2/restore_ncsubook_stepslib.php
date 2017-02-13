@@ -15,11 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define all the restore steps that will be used by the restore_ncsubook_activity_task
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -30,8 +34,6 @@ defined('MOODLE_INTERNAL') || die;
 class restore_ncsubook_activity_structure_step extends restore_activity_structure_step {
 
     protected function define_structure() {
-
-        $paths = array();
 
         $paths[] = new restore_path_element('ncsubook', '/activity/ncsubook');
         $paths[] = new restore_path_element('ncsubook_chapter', '/activity/ncsubook/chapter');
@@ -48,11 +50,11 @@ class restore_ncsubook_activity_structure_step extends restore_activity_structur
     protected function process_ncsubook($data) {
         global $DB;
 
-        $data = (object)$data;
-        $oldid = $data->id;
-        $data->course = $this->get_courseid();
+        $data           = (object)$data;
+        $oldid          = $data->id;
+        $data->course   = $this->get_courseid();
+        $newitemid      = $DB->insert_record('ncsubook', $data);
 
-        $newitemid = $DB->insert_record('ncsubook', $data);
         $this->apply_activity_instance($newitemid);
     }
 
@@ -63,13 +65,12 @@ class restore_ncsubook_activity_structure_step extends restore_activity_structur
     protected function process_ncsubook_chapter($data) {
         global $DB;
 
-        $data = (object)$data;
-        $oldid = $data->id;
-        $data->course = $this->get_courseid();
+        $data               = (object)$data;
+        $oldid              = $data->id;
+        $data->course       = $this->get_courseid();
+        $data->ncsubookid   = $this->get_new_parentid('ncsubook');
+        $newitemid          = $DB->insert_record('ncsubook_chapters', $data);
 
-        $data->ncsubookid = $this->get_new_parentid('ncsubook');
-
-        $newitemid = $DB->insert_record('ncsubook_chapters', $data);
         $this->set_mapping('ncsubook_chapter', $oldid, $newitemid, true);
     }
 
@@ -80,13 +81,12 @@ class restore_ncsubook_activity_structure_step extends restore_activity_structur
     protected function process_ncsubook_block($data) {
         global $DB;
 
-        $data = (object)$data;
-        $oldid = $data->id;
-        $data->course = $this->get_courseid();
+        $data               = (object)$data;
+        $oldid              = $data->id;
+        $data->course       = $this->get_courseid();
+        $data->chapterid    = $this->get_new_parentid('ncsubook_chapter');
+        $newitemid          = $DB->insert_record('ncsubook_blocks', $data);
 
-        $data->chapterid = $this->get_new_parentid('ncsubook_chapter');
-
-        $newitemid = $DB->insert_record('ncsubook_blocks', $data);
         $this->set_mapping('ncsubook_block', $oldid, $newitemid, true);
     }
 

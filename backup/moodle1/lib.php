@@ -15,11 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides support for the conversion of moodle1 backup to the moodle2 format
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2011 Tõnis Tartes <t6nis20@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -82,13 +86,13 @@ class moodle1_mod_ncsubook_handler extends moodle1_mod_handler {
     public function process_ncsubook($data) {
         global $CFG;
 
-        // get the course module id and context id
+        // Get the course module id and context id.
         $instanceid     = $data['id'];
         $cminfo         = $this->get_cminfo($instanceid);
         $this->moduleid = $cminfo['id'];
         $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
-        // replay the upgrade step 2009042006
+        // Replay the upgrade step 2009042006.
         if ($CFG->texteditors !== 'textarea') {
             $data['intro']       = text_to_html($data['intro'], false, false, true);
             $data['introformat'] = FORMAT_HTML;

@@ -15,11 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_book chapter deleted event.
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_book
- * @copyright  2013 Frédéric Massart
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_ncsubook\event;
@@ -75,7 +79,7 @@ class chapter_deleted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/ncsubook/view.php', array('id' => $this->contextinstanceid));
+        return new \moodle_url('/mod/ncsubook/view.php', ['id' => $this->contextinstanceid]);
     }
 
     /**
@@ -84,9 +88,9 @@ class chapter_deleted extends \core\event\base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'd';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
-        $this->data['objecttable'] = 'ncsubook_chapters';
+        $this->data['crud']         = 'd';
+        $this->data['edulevel']     = self::LEVEL_TEACHING;
+        $this->data['objecttable']  = 'ncsubook_chapters';
     }
 
     /**

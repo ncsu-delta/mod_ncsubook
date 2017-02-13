@@ -15,34 +15,43 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * Book import form
  *
  * @package    ncsubooktool_importhtml
  * @copyright  2004-2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 class ncsubooktool_importhtml_form extends moodleform {
 
-    function definition() {
-        $mform = $this->_form;
-        $data  = $this->_customdata;
+    public function definition() {
+        $mform      = $this->_form;
+        $data       = $this->_customdata;
+        $options    = [
+                        // '0' => get_string('typeonefile', 'ncsubooktool_importhtml'),
+                        '1' => get_string('typezipdirs', 'ncsubooktool_importhtml'),
+                        '2' => get_string('typezipfiles', 'ncsubooktool_importhtml'),
+                      ];
 
         $mform->addElement('header', 'general', get_string('import'));
 
-        $options = array(
-                // '0'=>get_string('typeonefile', 'ncsubooktool_importhtml'),
-                '1'=>get_string('typezipdirs', 'ncsubooktool_importhtml'),
-                '2'=>get_string('typezipfiles', 'ncsubooktool_importhtml'),
-        );
         $mform->addElement('select', 'type', get_string('type', 'ncsubooktool_importhtml'), $options);
         $mform->setDefault('type', 2);
 
         $mform->addElement('filepicker', 'importfile', get_string('ziparchive', 'ncsubooktool_importhtml'));
+
         $mform->addHelpButton('importfile', 'ziparchive', 'ncsubooktool_importhtml');
         $mform->addRule('importfile', null, 'required');
 
@@ -57,7 +66,7 @@ class ncsubooktool_importhtml_form extends moodleform {
         $this->set_data($data);
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         global $USER;
 
         if ($errors = parent::validation($data, $files)) {

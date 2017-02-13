@@ -15,59 +15,59 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book module capability definition
+ * This file is part of the NC State Book plugin
  *
- * @package    mod_ncsubook
- * @copyright  2009-2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
+ * @package mod_ncsubook
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
+                'mod/ncsubook:addinstance'          => [
+                                                        'riskbitmask'           => RISK_XSS,
+                                                        'captype'               => 'write',
+                                                        'contextlevel'          => CONTEXT_COURSE,
+                                                        'archetypes'            => [
+                                                                                    'editingteacher'    => CAP_ALLOW,
+                                                                                    'manager'           => CAP_ALLOW,
+                                                                                   ],
+                                                        'clonepermissionsfrom'  => 'moodle/course:manageactivities',
+                                                       ],
+                'mod/ncsubook:read'                 => [
+                                                        'captype'       => 'read',
+                                                        'contextlevel'  => CONTEXT_MODULE,
+                                                        'archetypes'    => [
+                                                                            'guest'             => CAP_ALLOW,
+                                                                            'frontpage'         => CAP_ALLOW,
+                                                                            'student'           => CAP_ALLOW,
+                                                                            'teacher'           => CAP_ALLOW,
+                                                                            'editingteacher'    => CAP_ALLOW,
+                                                                            'manager'           => CAP_ALLOW,
+                                                                           ],
+                                                       ],
+                'mod/ncsubook:viewhiddenchapters'   => [
+                                                        'captype'       => 'read',
+                                                        'contextlevel'  => CONTEXT_MODULE,
+                                                        'archetypes'    => [
+                                                                            'teacher'           => CAP_ALLOW,
+                                                                            'editingteacher'    => CAP_ALLOW,
+                                                                            'manager'           => CAP_ALLOW,
+                                                                           ]
+                                                       ],
 
-    'mod/ncsubook:addinstance' => array(
-        'riskbitmask' => RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'moodle/course:manageactivities'
-    ),
-
-    'mod/ncsubook:read' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'guest' => CAP_ALLOW,
-            'frontpage' => CAP_ALLOW,
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/ncsubook:viewhiddenchapters' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'mod/ncsubook:edit' => array(
-        'riskbitmask' => RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        )
-    ),
-);
+                'mod/ncsubook:edit'                 => [
+                                                        'riskbitmask'   => RISK_XSS,
+                                                        'captype'       => 'write',
+                                                        'contextlevel'  => CONTEXT_MODULE,
+                                                        'archetypes'    => [
+                                                                            'editingteacher'    => CAP_ALLOW,
+                                                                            'manager'           => CAP_ALLOW,
+                                                                           ],
+                                                       ],
+                ];

@@ -15,26 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file is part of the NC State Book plugin
+ *
+ * The NC State Book plugin is an extension of mod_book with some additional
+ * blocks to aid in organizing and presenting content. This plugin was originally
+ * developed for North Carolina State University.
+ *
  * Book import language strings
  *
  * @package    ncsubooktool_importhtml
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @modified   for the NC State Book plugin.
+ * @copyright 2014 Gary Harris, Amanda Robertson, Cathi Phillips Dunnagan, Jeff Webster, David Lanier
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$string['doimport'] = 'Import';
-$string['errornochapters'] = 'Cannot find chapters in selected file';
-$string['import'] = 'Import chapter';
-$string['importhtml:import'] = 'Import chapters';
-$string['importing'] = 'Importing';
-$string['importingchapters'] = 'Importing chapters into NC State Book';
-$string['pluginname'] = 'NC State Book chapter import';
-$string['relinking'] = 'Relinking';
-$string['type'] = 'Type';
-$string['typeonefile'] = 'One HTML file with headings as chapters';
-$string['typezipfiles'] = 'Each HTML file represents one chapter';
-$string['typezipdirs'] = 'Each folder represents one chapter';
-$string['ziparchive'] = 'Zip file';
-$string['ziparchive_help'] = 'Select a zip file containing HTML files and optional multimedia files and folders. To upload subchapters, add "_sub" to the end of HTML file or folder names.';
+$string['doimport']                     = 'Import';
+$string['errornochapters']              = 'Cannot find chapters in selected file';
+$string['import']                       = 'Import chapter';
+$string['importhtml:import']            = 'Import chapters';
+$string['importing']                    = 'Importing';
+$string['importingchapters']            = 'Importing chapters into NC State Book';
+$string['pluginname']                   = 'NC State Book chapter import';
+$string['relinking']                    = 'Relinking';
+$string['type']                         = 'Type';
+$string['typeonefile']                  = 'One HTML file with headings as chapters';
+$string['typezipfiles']                 = 'Each HTML file represents one chapter';
+$string['typezipdirs']                  = 'Each folder represents one chapter';
+$string['ziparchive']                   = 'Zip file';
+$string['ziparchive_help']              = 'Select a zip file containing HTML files and optional multimedia files and folders. '
+                                        . 'To upload subchapters, add "_sub" to the end of HTML file or folder names.';
