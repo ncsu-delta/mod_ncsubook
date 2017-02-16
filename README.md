@@ -2,17 +2,17 @@
 
 Copyright &copy; 2012-2017
 
-The Book module makes it easy to create multi-page resources with a book-like format. This module can be used to build complete book-like websites inside of your Moodle course. This module was developed for Technical University of Liberec (Czech Republic). Many ideas and code were taken from other Moodle modules and Moodle itself.
+This module makes it easy to create multi-page resources with a book-like format. It can be used to build complete book-like websites inside of your Moodle course. The Moodle Book module was originally developed for Technical University of Liberec (Czech Republic). Many ideas and code were taken from other Moodle modules and Moodle itself.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the [GNU General Public License](http://www.gnu.org/copyleft/gpl.html) for more details.
 
-## Originally Created by:
+## Originally created by:
 
-* Petr Skoda (skodak) - Original creator of the Moodle Core Book Module
+* Petr Skoda (skodak)
 
-## Created by:
+## Modified and enhanced for NC State University by:
 
 * Gary Harris
 
