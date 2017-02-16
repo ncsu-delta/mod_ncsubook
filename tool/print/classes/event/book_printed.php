@@ -108,5 +108,16 @@ class book_printed extends \core\event\base {
         $this->data['edulevel']     = self::LEVEL_PARTICIPATING;
         $this->data['objecttable']  = 'ncsubook';
     }
+    
+    public static function get_objectid_mapping() {
+        return array('db' => 'ncsubook', 'restore' => 'ncsubook');
+    }
+    
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['ncsubookid'] = array('db' => 'ncsubook', 'restore' => 'ncsubook');
+
+        return $othermapped;
+    }
 
 }

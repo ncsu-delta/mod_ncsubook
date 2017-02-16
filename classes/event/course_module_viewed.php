@@ -91,6 +91,17 @@ class course_module_viewed extends \core\event\course_module_viewed {
         $this->data['edulevel']     = self::LEVEL_PARTICIPATING;
         $this->data['objecttable']  = 'ncsubook';
     }
+    
+    public static function get_objectid_mapping() {
+        return array('db' => 'ncsubook_chapters', 'restore' => 'ncsubook_chapter');
+    }
+    
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['ncsubookid'] = array('db' => 'ncsubook', 'restore' => 'ncsubook');
+
+        return $othermapped;
+    }
 
     /**
      * Custom validation.

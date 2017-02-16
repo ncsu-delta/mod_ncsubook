@@ -91,6 +91,17 @@ class chapter_viewed extends \core\event\base {
         $this->data['edulevel']     = self::LEVEL_PARTICIPATING;
         $this->data['objecttable']  = 'ncsubook_chapters';
     }
+    
+    public static function get_objectid_mapping() {
+        return array('db' => 'ncsubook_chapters', 'restore' => 'ncsubook_chapter');
+    }
+    
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['ncsubookid'] = array('db' => 'ncsubook', 'restore' => 'ncsubook');
+
+        return $othermapped;
+    }
 
     /**
      * Custom validation.

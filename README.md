@@ -1,25 +1,36 @@
-NC State Book module for Moodle (http://moodle.org/) - Copyright (C) 2004-2011  Petr Skoda (http://skodak.org/)
+# NC State Book module for Moodle (http://moodle.org/) 
 
-The Book module makes it easy to create multi-page resources with a book-like format. This module can be used to build complete book-like websites inside of your Moodle course.
-This module was developed for Technical University of Liberec (Czech Republic). Many ideas and code were taken from other Moodle modules and Moodle itself
+## Copyright (C) 2012-2017
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
+### The Book module makes it easy to create multi-page resources with a book-like format. This module can be used to build complete book-like websites inside of your Moodle course.
+### This module was developed for Technical University of Liberec (Czech Republic). Many ideas and code were taken from other Moodle modules and Moodle itself
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details: http://www.gnu.org/copyleft/gpl.html
+#### This program is free software; you can redistribute it and/or modify
+#### it under the terms of the GNU General Public License as published by
+#### the Free Software Foundation; either version 3 of the License, or
+#### (at your option) any later version.
 
+##### This program is distributed in the hope that it will be useful,
+##### but WITHOUT ANY WARRANTY; without even the implied warranty of
+##### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##### [GNU General Public License](http://www.gnu.org/copyleft/gpl.html) for more details.
 
-Created by:
+# Originally Created by:
 
-* Petr Skoda (skodak) - most of the coding & design
-* Mojmir Volf, Eloy Lafuente, Antonio Vicent and others
+* Petr Skoda (skodak) - Original creator of the Moodle Core Book Module
 
-Intentionally omitted features:
+# Created by:
+
+* Gary Harris 
+
+## Contributors: 
+
+* Amanda Robertson
+* Cathi Phillips Dunnagan 
+* Jeff Webster 
+* David Lanier
+
+## Intentionally omitted features:
 
 * more chapter levels - it would encourage teachers to write too much complex and long books, better use standard standalone HTML editor and import it as Resource. DocBook format is another suitable solution.
 * TOC hiding in normal view - instead use printer friendly view

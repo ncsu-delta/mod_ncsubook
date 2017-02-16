@@ -101,5 +101,9 @@ class chapter_deleted extends \core\event\base {
     public function set_legacy_logdata($legacydata) {
         $this->legacylogdata = $legacydata;
     }
+    
+    public static function get_objectid_mapping() {
+        return array('db' => 'ncsubook_chapters', 'restore' => 'ncsubook_chapter');
+    }
 
 }
